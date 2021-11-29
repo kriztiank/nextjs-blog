@@ -8,7 +8,7 @@ import { sortByDate } from '../../../utils'
 import { POSTS_PER_PAGE } from '../../../config/index'
 // import { getPosts } from '@/lib/posts'
 
-export default function BlogPage({ posts }) {
+export default function BlogPage({ posts, numPages, currentPage }) {
   // console.log(posts)
   return (
     <Layout>
@@ -35,14 +35,16 @@ export async function getStaticPaths() {
       params: { page_index: i.toString() },
     })
   }
-  
+
   return {
     paths,
     fallback: false,
   }
 }
 
-export async function getStaticProps() {
+export async function getStaticProps({ params }) {
+  const page = parseInt((params && params.page_index) || 1)
+
   const files = fs.readdirSync(path.join('posts'))
 
   const posts = files.map(filename => {
@@ -61,9 +63,19 @@ export async function getStaticProps() {
     }
   })
 
+  const numPages = Math.ceil(files.length / POSTS_PER_PAGE)
+  const pageIndex = page - 1
+  const orderedPosts = posts.slice(
+    pageIndex * POSTS_PER_PAGE,
+    (pageIndex + 1) * POSTS_PER_PAGE
+  )
+
+
   return {
     props: {
-      posts: posts.sort(sortByDate),
+      posts: orderedPosts,
+      numPages,
+      currentPage: page,
     },
   }
 }
