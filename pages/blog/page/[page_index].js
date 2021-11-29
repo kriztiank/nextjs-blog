@@ -4,6 +4,7 @@ import Link from 'next/link'
 import matter from 'gray-matter'
 import Layout from '../../../components/Layout'
 import Post from '../../../components/Post'
+import Pagination from '../../../components/Pagination'
 import { sortByDate } from '../../../utils'
 import { POSTS_PER_PAGE } from '../../../config/index'
 // import { getPosts } from '@/lib/posts'
@@ -18,6 +19,8 @@ export default function BlogPage({ posts, numPages, currentPage }) {
         {posts.map((post, index) => (
           <Post key={index} post={post} />
         ))}
+
+        <Pagination currentPage={currentPage} numPages={numPages} />
       </div>
     </Layout>
   )
